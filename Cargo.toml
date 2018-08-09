@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "termex_cli",
+  "termex_sync",
+  "termex_import",
+  "termex_api"
+]

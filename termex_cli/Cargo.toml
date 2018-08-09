@@ -1,0 +1,6 @@
+[package]
+name = "termex_cli"
+version = "0.1.0"
+authors = ["sourcepirate <sathyanarrayanan@yandex.com>"]
+
+[dependencies]
