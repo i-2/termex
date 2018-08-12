@@ -62,13 +62,31 @@ impl TermexClient {
         }
     }
 
-    pub fn blobs(&self) -> TermexResult<Blobs<Data>> {
+    pub fn blobs(&self, page: u32, limit: u32) -> TermexResult<Blobs<Data>> {
         let blob_url: String = format!("{}/{}", TERMEX_URL, "blobs");
         let client = Client::new();
-        let mut res = client.get(&blob_url[..]).header(Authorization(self.token.clone())).send()?;
+        let mut req_map = HashMap::new();
+        req_map.insert("page", page);
+        req_map.insert("limit", limit);
+        let mut res = client.get(&blob_url[..])
+                            .query(&req_map)
+                            .header(Authorization(self.token.clone()))
+                            .send()?;
         let datas: Vec<Data> = res.json()?;
         Ok(Blobs(datas))
     }
 
+    pub fn new_blob(&self, text: String) -> TermexResult<()> {
+        let blob_url : String = format!("{}/{}", TERMEX_URL, "blobs");
+        let client = Client::new();
+        let mut request_map = HashMap::new();
+        request_map.insert("blob_type", "history");
+        request_map.insert("blob_text", text.as_str());
+        let mut res = client.post(&blob_url)
+        .json(&request_map)
+        .header(Authorization(self.token.clone()))
+        .send()?;
+        Ok(())
+    }
 
 }

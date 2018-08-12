@@ -12,14 +12,4 @@ pub mod blob;
 pub mod key;
 pub mod vault;
 
-const SERVICE_NAME: & 'static str = "termex";
-
-
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        
-    }
-}
+pub const SERVICE_NAME: & 'static str = "termex";
