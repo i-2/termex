@@ -37,6 +37,12 @@ pub struct TermexClient {
 
 impl TermexClient {
 
+    pub fn new(token: String) -> Self {
+        TermexClient {
+            token
+        }
+    }
+
     pub fn login(username: String, password: String) -> TermexResult<Self> {
         let login_url: String = format!("{}/{}", TERMEX_URL, "login");
         let client = Client::new();
