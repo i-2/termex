@@ -32,7 +32,7 @@ impl From<Error> for TermexClientError {
 
 #[derive(Deserialize)]
 pub struct TermexClient {
-    token: String
+    pub token: String
 }
 
 impl TermexClient {
