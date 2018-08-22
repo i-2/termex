@@ -4,6 +4,7 @@ extern crate serde;
 extern crate termex_api;
 extern crate docopt;
 extern crate rpassword;
+extern crate base64;
 
 mod login;
 mod signup;
@@ -13,8 +14,10 @@ use std::io::Write;
 use std::process::Command;
 use std::process::exit;
 use docopt::Docopt;
+use base64::{encode, decode};
 use rpassword::read_password;
 use termex_api::vault::Vault;
+use termex_api::key::Key;
 
 pub enum UserLookUpError {
     UserError,
@@ -81,6 +84,24 @@ fn main() {
             }
         };
         vault.set_token(token);
+        
+        if(!vault.exists()){
+            let private_key = Key::generate(256);
+            let result = match private_key {
+                Ok(key) => key.to_pem_string(),
+                Err(_) => {
+                    println!("Cannot genrate secure keypair..");
+                    exit(1);
+                } 
+            };
+            match result {
+                Ok(key_str) => vault.set(encode(key_str.as_bytes())),
+                Err(_) => {
+                    println!("Unable to save the key");
+                    exit(1);
+                }
+            };
+        }
         exit(0);
     }
 
@@ -96,7 +117,8 @@ fn main() {
         let res_sign = signup::signup(username, password);
         match res_sign {
             Ok(_) => println!("Signup Succeded"),
-            Err(_) => {
+            Err(e) => {
+                println!("{:?}", e);
                 println!("Signup Failed!");
                 exit(1)
             } 

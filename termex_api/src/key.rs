@@ -60,6 +60,23 @@ impl Key {
     pub fn as_string(&self) -> Result<Vec<u8>, ErrorStack> {
         self.key.private_key_to_pem()
     }
+
+    pub fn generate(num: u32) -> Result<Self, ErrorStack> {
+        match Rsa::generate(num) {
+            Ok(key) => Ok(Key::new(key)),
+            Err(_e) => Err(_e)
+        }
+    }
+
+    pub fn to_pem_string(&self) -> Result<String, ErrorStack>  {
+        self.key.private_key_to_pem()
+        .and_then(|res| String::from_utf8(res)
+        .map_err(|e| ErrorStack::get()))
+    }
+
+    pub fn from_pem_string(bytes: Vec<u8>) -> Result<Self, ErrorStack> {
+        Rsa::private_key_from_pem(&bytes).and_then(|key_bytes| Ok(Key::new(key_bytes)))
+    }
 }
 
 
@@ -89,5 +106,11 @@ mod tests {
         let string : Vec<u8> = keyed.encrypt(hello.as_bytes().to_vec()).unwrap();
         let decrypted = keyed.decrypt(string).unwrap();
         assert_eq!(decrypted, hello.as_bytes().to_vec());
+    }
+
+    #[test]
+    fn test_print_pem_string(){
+        let key: Key = Key::generate(256).unwrap();
+        println!("{:?}",key.to_pem_string())
     }
 }
