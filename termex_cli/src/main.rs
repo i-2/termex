@@ -1,10 +1,14 @@
 #[macro_use]
+extern crate log;
+#[macro_use]
 extern crate serde_derive;
+
 extern crate serde;
 extern crate termex_api;
 extern crate docopt;
 extern crate rpassword;
 extern crate base64;
+extern crate env_logger;
 
 mod login;
 mod signup;
@@ -58,6 +62,7 @@ struct Args {
 }
 
 fn main() {
+    env_logger::init();
     let system_user: String = username();
     let input_stream: io::Stdin = io::stdin();
     let mut output_stream : io::Stdout = io::stdout();
@@ -118,7 +123,7 @@ fn main() {
         match res_sign {
             Ok(_) => println!("Signup Succeded"),
             Err(e) => {
-                println!("{:?}", e);
+                debug!("{:?}", e);
                 println!("Signup Failed!");
                 exit(1)
             } 

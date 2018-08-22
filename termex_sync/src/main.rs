@@ -1,9 +1,10 @@
-#[macro_use]
-extern crate serde_derive;
+#[macro_use] extern crate log;
+#[macro_use] extern crate serde_derive;
 extern crate serde;
 extern crate termex_api;
 extern crate docopt;
 extern crate base64;
+extern crate env_logger;
 
 use docopt::Docopt;
 use std::io;
@@ -37,6 +38,7 @@ struct Args{
 }
 
 fn main() {
+    env_logger::init();
     // main args
     let args: Args = Docopt::new(HELP).and_then(|d| d.deserialize()).unwrap_or_else(|e| e.exit());
     if let Some(command) = args.arg_command {
