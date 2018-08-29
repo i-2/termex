@@ -1,7 +1,9 @@
 language: rust
 
 before_script:
+  - sudo apt-get install build-essential
   - rustup toolchain install stable
+
 
 script:
   - cargo build
