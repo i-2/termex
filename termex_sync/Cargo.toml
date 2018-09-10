@@ -3,6 +3,10 @@ name = "termex_sync"
 version = "0.1.0"
 authors = ["sourcepirate <sathyanarrayanan@yandex.com>"]
 
+[dev-dependencies]
+cargo-deb = "1.11.0"
+cargo-rpm = "0.2.0"
+
 [dependencies]
 termex_api = {path = "../termex_api"}
 serde = "1.0.70"
@@ -11,3 +15,10 @@ docopt = "1.0.0"
 base64 = "0.9.2"
 log = "0.4.4"
 env_logger = "0.5.12"
+
+[package.metadata.deb]
+maintainer = "Sathya Narrayanan Balaji <sathyanarrayanan@yandex.com>"
+copyright = "2018-2019, Sathya Narrayanan Balaji"
+section = "admin"
+priority = "optional"
+assets =[["target/release/termex_sync", "usr/local/bin/", "755"]]

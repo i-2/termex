@@ -3,4 +3,13 @@ name = "termex_import"
 version = "0.1.0"
 authors = ["sourcepirate <sathyanarrayanan@yandex.com>"]
 
-[dependencies]
+[dev-dependencies]
+cargo-deb = "1.11.0"
+cargo-rpm = "0.2.0"
+
+[package.metadata.deb]
+maintainer = "Sathya Narrayanan Balaji <sathyanarrayanan@yandex.com>"
+copyright = "2018-2019, Sathya Narrayanan Balaji"
+section = "admin"
+priority = "optional"
+assets = [["target/release/termex_import", "usr/local/bin/", "755"]]

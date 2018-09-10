@@ -89,7 +89,6 @@ fn main() {
             }
         };
         vault.set_token(token);
-        
         if(!vault.exists()){
             let private_key = Key::generate(256);
             let result = match private_key {

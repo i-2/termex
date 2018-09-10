@@ -43,6 +43,7 @@ fn main() {
     let args: Args = Docopt::new(HELP).and_then(|d| d.deserialize()).unwrap_or_else(|e| e.exit());
     if let Some(command) = args.arg_command {
         //sync new command
+        println!("{:?}",  command);
         let user = whoami();
         let vault = Vault::new(&user);
         if !vault.exists() {
