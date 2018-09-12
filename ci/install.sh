@@ -1,8 +1,8 @@
 set -ex
 
 main() {
-    curl https://sh.rustup.rs -sSf | \
-        sh -s -- -y --default-toolchain $TRAVIS_RUST_VERSION
+    # curl https://sh.rustup.rs -sSf | \
+    #     sh -s -- -y --default-toolchain $TRAVIS_RUST_VERSION
     local target=
     if [ $TRAVIS_OS_NAME = linux ]; then
         target=x86_64-unknown-linux-gnu
@@ -34,7 +34,7 @@ main() {
 
     # This fetch`es latest stable release
     local tag=$(git ls-remote --tags --refs --exit-code https://github.com/japaric/cross \
-                       | cut -d/ -f3 \
+                       | cut -d / -f3 \
                        | grep -E '^v[0.1.0-9.]+$' \
                        | $sort --version-sort \
                        | tail -n1)
