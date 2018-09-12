@@ -48,7 +48,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pkg-config --libs --cflags dbus-1; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/include/dbus-1.0; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/lib/x86_64-linux-gnu/dbus-1.0/include; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash ci/script.sh; fi
+  - bash ci/script.sh
 
 after_script: set +e
 
