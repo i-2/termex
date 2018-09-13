@@ -1,69 +1,16 @@
 language: rust
-services: docker
-sudo: required
-
-env:
-  global:
-    - CRATE_NAME=termex
-
-
-matrix:
-  include:
-    # Linux
-    - env: TARGET=x86_64-unknown-linux-gnu
-    # OSX
-    - env: TARGET=x86_64-apple-darwin
-      os: osx
-    # Testing other channels
-    - env: TARGET=x86_64-apple-darwin
-      os: osx
-      rust: nightly
-
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == linux ]]; then sudo apt-get install binutils libdbus-1-dev build-essential libssl-dev dbus-x11 ; fi
-
-before_install:
-  - set -e
-  - rustup self update
-
-install:
-  - sh ci/install.sh
-  - source ~/.cargo/env || true
-
-script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo $PKG_CONFIG_PATH; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls $PKG_CONFIG_PATH; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls $PKG_CONFIG_PATH; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pkg-config --libs --cflags dbus-1; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/include/dbus-1.0; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/lib/x86_64-linux-gnu/dbus-1.0/include; fi
-  - bash ci/script.sh
-
-after_script: set +e
-
-before_deploy:
-  - sh ci/before_deploy.sh
-
-deploy:
-  api_key:
-    secure: "eSxI8yqnJFO8NNAqt7RmVUVSft3OgwKWN0U1eAQQ79g7u1us1nY69S8qShPpG6xPjRxayPn24rZPa7xv26yIclOCbGeJBEnLuYvP5cNSw55w/lhruWK8l3y7caP8jBLV1bbiYVcmQx0JUWu/oPuHmLdd7wWpmVjzUhD+3a0tXcS10/YrNQ7qZ+xgDRz1J/6ZLB+KFs6x2nfwyMjEqcshfXi+p3CbBgy2FJBJ4IHcThaWc/ZrdgEXpqqTrP/b6sAQhpxfNBdu2U0fLBJNv9x3ecBvNtsJzj2k4lZvecIitMA8WK26Pz54QKso39K2zgiPCBV6HYxfGH0PynxT2nPMNSw6i12spvC1GKU7VgX6ZYuVug7RkjBYsrgjpwPsust5sn9cNCX7KThU1qfMY3J/SEabCOge3K28PGcCdcWHg7lhZ/MuxAYPOrlEnO3K2AVCj9wkQd9mdond6cNrFBLuXFipmhvH6c+YhwksEyKKYk8xjx+mA+gjP3OZV2pAjTbDPHpsWkWxqlmkeTK947JGco5KRzi/akfl0CJDwlF+DnnBaGmLeQ8eeUIFfUojylxKMWo9cjqdLxqF5TskW+m9G/4QANtEKe0c21XO7wdfG3GwyaCTK6HggX2WAtIIhQHcjME9uHPvW1xjFZ0tKax6Pu/L8B9vM8bHNCiPBYX730M="
-  file_glob: true
-  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
-  on:
-    condition: $TRAVIS_RUST_VERSION = stable
-    tags: true
-  provider: releases
-  skip_cleanup: true
-
 cache: cargo
-before_cache:
-  - chmod -R a+r $HOME/.cargo
-
-branches:
-  only:
-    - /^v\d+\.\d+\.\d+.*$/
-    - master
-
-notifications:
-  email:
-    on_success: never
+dist: trusty
+os: 
+  - linux
+  - osx
+# Run builds for all the supported trains
+rust:
+  - nightly
+  - beta
+  - stable
+  - 1.0.0
+# The main build
+script:
+  - cargo test
+  - cargo build --release
