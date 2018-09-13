@@ -11,7 +11,7 @@ main() {
         eval `dbus-launch --sh-syntax`
     else
         FEATURES='--no-default-features'
-        COMPILER=cross
+        COMPILER=cargo
     fi
 
     $COMPILER build --target $TARGET $FEATURES
