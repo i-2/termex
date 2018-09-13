@@ -7,10 +7,17 @@ os:
 # Run builds for all the supported trains
 rust:
   - nightly
-  - beta
   - stable
-  - 1.0.0
 # The main build
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == linux ]]; then sudo apt-get install binutils libdbus-1-dev build-essential libssl-dev dbus-x11 ; fi
+
 script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo $PKG_CONFIG_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls $PKG_CONFIG_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls $PKG_CONFIG_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pkg-config --libs --cflags dbus-1; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/include/dbus-1.0; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/lib/x86_64-linux-gnu/dbus-1.0/include; fi
   - cargo test
   - cargo build --release
