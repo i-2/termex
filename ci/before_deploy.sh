@@ -2,30 +2,21 @@
 
 set -ex
 
-main() {
+os_type="$1"
 
-    local src=$(pwd) \
-          stage=
+main(){
 
-    case $TRAVIS_OS_NAME in
-        linux)
-            stage=$(mktemp -d)
-            ;;
-        osx)
-            stage=$(mktemp -d -t tmp)
-            ;;
-    esac
+    # delete all
+    TAG=$TRAVIS_TAG
+    BIN_DIR="target/release/"
+    # target release
+    TERMEX_CLI="${BIN_DIR}termex_cli"
+    TERMEX_SYNC="${BIN_DIR}termex_sync"
 
-    test -f Cargo.lock || cargo generate-lockfile
+    # now tar the package and upload
+    tar -cvf ${CRATE_NAME}-${os_type}-${TRAVIS_TAG}.tar.gz TERMEX_CLI TERMEX_SYNC
 
-    cp target/$TARGET/release/termex_cli $stage/
-    cp target/$TARGET/release/termex_sync $stage
-
-    cd $stage
-    tar czf $src/$CRATE_NAME-$TRAVIS_TAG-$TARGET.tar.gz *
-    cd $src
-
-    rm -rf $stage
 }
+
 
 main
