@@ -13,6 +13,9 @@ main(){
     TERMEX_CLI="${BIN_DIR}termex_cli"
     TERMEX_SYNC="${BIN_DIR}termex_sync"
 
+    mkdir -p stage/
+    cp $TERMEX_CLI stage/
+    cp $TERMEX_SYNC stage/
     # now tar the package and upload
     tar -cvf ${CRATE_NAME}-${os_type}-${TRAVIS_TAG}.tar.gz $TERMEX_CLI $TERMEX_SYNC
 
