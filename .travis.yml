@@ -27,7 +27,6 @@ script:
   - chmod +x ci/before_deploy.sh
 
 before_deploy:
-  - set -x
   - cargo build --release
   - ./ci/before_deploy.sh ${TRAVIS_OS_NAME}
 
