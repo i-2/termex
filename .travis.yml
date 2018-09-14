@@ -24,11 +24,11 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/include/dbus-1.0; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/lib/x86_64-linux-gnu/dbus-1.0/include; fi
   - cargo test
-  - cargo build --release
   - chmod +x ci/before_deploy.sh
 
 before_deploy:
   - set -x
+  - cargo build --release
   - ./ci/before_deploy.sh ${TRAVIS_OS_NAME}
 
 deploy:
