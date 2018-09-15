@@ -1,18 +1,18 @@
 //! Blob object
 
-use std::slice::Iter;
-use key::Encryptor;
 use key::Decryptor;
+use key::Encryptor;
 use key::Key;
+use std::slice::Iter;
 
 pub enum MsgError {
     ConversionError,
     DecodeError(String),
-    EncodeError(String)
+    EncodeError(String),
 }
 
 pub trait Totext<D: Decryptor> {
-   fn decrypt(&self, &D) -> Result<String, MsgError>;
+    fn decrypt(&self, &D) -> Result<String, MsgError>;
 }
 
 pub trait Toblob<E: Encryptor> {
@@ -21,50 +21,50 @@ pub trait Toblob<E: Encryptor> {
 
 #[derive(Deserialize, Serialize)]
 pub struct Data {
-    blob_type : String,
-    blob_text : String
+    blob_type: String,
+    blob_text: String,
 }
 
 impl<D: Decryptor> Totext<D> for Data {
-
     fn decrypt(&self, d: &D) -> Result<String, MsgError> {
-       let bytes : Vec<u8>=  d.decrypt(self.blob_text.clone().as_bytes().to_vec())
-        .map_err(|_e| MsgError::DecodeError(self.blob_text.clone()))?;
+        let bytes: Vec<u8> = d
+            .decrypt(self.blob_text.clone().as_bytes().to_vec())
+            .map_err(|_e| MsgError::DecodeError(self.blob_text.clone()))?;
         return String::from_utf8(bytes).map_err(|_e| MsgError::ConversionError);
     }
 }
 
 impl<E: Encryptor> Toblob<E> for Data {
-
     fn encrypt(&self, enc: &E) -> Result<String, MsgError> {
-        let bytes  = enc.encrypt(self.blob_text.clone().as_bytes().to_vec()).map_err(|_e| MsgError::EncodeError(self.blob_text.clone()))?;
+        let bytes = enc
+            .encrypt(self.blob_text.clone().as_bytes().to_vec())
+            .map_err(|_e| MsgError::EncodeError(self.blob_text.clone()))?;
         return String::from_utf8(bytes).map_err(|_e| MsgError::ConversionError);
     }
 }
 
-pub struct Blobs<T: Toblob<Key> + Totext<Key>> (pub Vec<T>);
+pub struct Blobs<T: Toblob<Key> + Totext<Key>>(pub Vec<T>);
 
-impl<'a, T> Blobs<T> where T: Toblob<Key> + Totext<Key> {
-
+impl<'a, T> Blobs<T>
+where
+    T: Toblob<Key> + Totext<Key>,
+{
     pub fn iter(&'a self, key: &'a Key) -> BlobIterator<T> {
-        
-        return BlobIterator{
+        return BlobIterator {
             key: key,
             pos: 0,
-            blob: self
-        }
+            blob: self,
+        };
     }
-
 }
 
-pub struct BlobIterator<'a, T: 'a +  Toblob<Key> + Totext<Key>> {
+pub struct BlobIterator<'a, T: 'a + Toblob<Key> + Totext<Key>> {
     key: &'a Key,
     blob: &'a Blobs<T>,
-    pos: usize
+    pos: usize,
 }
 
 impl<'a, T: 'a + Toblob<Key> + Totext<Key>> Iterator for BlobIterator<'a, T> {
-
     type Item = String;
 
     fn next(&mut self) -> Option<String> {
@@ -76,10 +76,9 @@ impl<'a, T: 'a + Toblob<Key> + Totext<Key>> Iterator for BlobIterator<'a, T> {
                 None => None,
                 Some(val) => match val.decrypt(self.key) {
                     Ok(s) => Some(s),
-                    Err(_) => None
-                }
+                    Err(_) => None,
+                },
             }
         }
     }
 }
-

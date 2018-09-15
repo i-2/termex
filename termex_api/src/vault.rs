@@ -1,15 +1,15 @@
 //! using vault to keyring.
 
-use std::env::{var, VarError};
-use openssl::rsa::Rsa;
 use keyring::{Keyring, Result as KeyResult};
+use openssl::rsa::Rsa;
+use std::env::{var, VarError};
 use SERVICE_NAME;
 
 const TOKENSTORE: &'static str = "TERMEX_TOKEN";
 
-pub struct Vault<'a>{
-  inner: Keyring<'a>,
-  token: Keyring<'a>
+pub struct Vault<'a> {
+    inner: Keyring<'a>,
+    token: Keyring<'a>,
 }
 
 impl<'a> Vault<'a> {
@@ -33,10 +33,10 @@ impl<'a> Vault<'a> {
         self.token.get_password()
     }
 
-    pub fn new(username: &'a str) -> Self{
+    pub fn new(username: &'a str) -> Self {
         Vault {
             inner: Keyring::new(SERVICE_NAME, username),
-            token: Keyring::new(TOKENSTORE, username)
+            token: Keyring::new(TOKENSTORE, username),
         }
     }
 }
