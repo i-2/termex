@@ -13,11 +13,11 @@ main(){
     TERMEX_CLI="${BIN_DIR}termex_cli"
     TERMEX_SYNC="${BIN_DIR}termex_sync"
 
-    mkdir -p stage/
-    cp $TERMEX_CLI stage/
-    cp $TERMEX_SYNC stage/
+    mkdir -p /tmp/stage/
+    cp $TERMEX_CLI /tmp/stage/
+    cp $TERMEX_SYNC /tmp/stage/
     # now tar the package and upload
-    tar -cvf ${CRATE_NAME}-${os_type}-${TRAVIS_TAG}.tar.gz stage/
+    tar -cvf ${CRATE_NAME}-${os_type}-${TRAVIS_TAG}.tar.gz /tmp/stage/
 
 }
 
