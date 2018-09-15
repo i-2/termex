@@ -1,8 +1,41 @@
 language: rust
+cache: cargo
+dist: trusty
+os: 
+  - linux
+  - osx
+# Run builds for all the supported trains
+env:
+  global:
+    - CRATE_NAME=termex
 
+rust:
+  - nightly
+  - stable
+# The main build
 before_script:
-  - rustup toolchain install stable
+  - if [[ "$TRAVIS_OS_NAME" == linux ]]; then sudo apt-get install binutils libdbus-1-dev build-essential libssl-dev dbus-x11 ; fi
 
 script:
-  - cargo build
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo $PKG_CONFIG_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls $PKG_CONFIG_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls $PKG_CONFIG_PATH; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pkg-config --libs --cflags dbus-1; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/include/dbus-1.0; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls /usr/lib/x86_64-linux-gnu/dbus-1.0/include; fi
   - cargo test
+  - chmod +x ci/before_deploy.sh
+
+before_deploy:
+  - cargo build --release
+  - ./ci/before_deploy.sh ${TRAVIS_OS_NAME}
+cache: cargo
+deploy:
+  api_key:
+    secure: "eSxI8yqnJFO8NNAqt7RmVUVSft3OgwKWN0U1eAQQ79g7u1us1nY69S8qShPpG6xPjRxayPn24rZPa7xv26yIclOCbGeJBEnLuYvP5cNSw55w/lhruWK8l3y7caP8jBLV1bbiYVcmQx0JUWu/oPuHmLdd7wWpmVjzUhD+3a0tXcS10/YrNQ7qZ+xgDRz1J/6ZLB+KFs6x2nfwyMjEqcshfXi+p3CbBgy2FJBJ4IHcThaWc/ZrdgEXpqqTrP/b6sAQhpxfNBdu2U0fLBJNv9x3ecBvNtsJzj2k4lZvecIitMA8WK26Pz54QKso39K2zgiPCBV6HYxfGH0PynxT2nPMNSw6i12spvC1GKU7VgX6ZYuVug7RkjBYsrgjpwPsust5sn9cNCX7KThU1qfMY3J/SEabCOge3K28PGcCdcWHg7lhZ/MuxAYPOrlEnO3K2AVCj9wkQd9mdond6cNrFBLuXFipmhvH6c+YhwksEyKKYk8xjx+mA+gjP3OZV2pAjTbDPHpsWkWxqlmkeTK947JGco5KRzi/akfl0CJDwlF+DnnBaGmLeQ8eeUIFfUojylxKMWo9cjqdLxqF5TskW+m9G/4QANtEKe0c21XO7wdfG3GwyaCTK6HggX2WAtIIhQHcjME9uHPvW1xjFZ0tKax6Pu/L8B9vM8bHNCiPBYX730M="
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_OS_NAME-$TRAVIS_TAG.*
+  on:
+    tags: true
+  provider: releases
+  skip_cleanup: true

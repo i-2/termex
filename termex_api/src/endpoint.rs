@@ -9,6 +9,7 @@ const TERMEX_URL : &'static str= "http://termex.herokuapp.com";
 
 pub type TermexResult<T> = Result<T, TermexClientError>;
 
+#[derive(Debug)]
 pub enum TermexClientError {
     AuthFailed,
     WithMessage(String)
@@ -37,6 +38,12 @@ pub struct TermexClient {
 
 impl TermexClient {
 
+    pub fn new(token: String) -> Self {
+        TermexClient {
+            token
+        }
+    }
+
     pub fn login(username: String, password: String) -> TermexResult<Self> {
         let login_url: String = format!("{}/{}", TERMEX_URL, "login");
         let client = Client::new();
@@ -56,9 +63,12 @@ impl TermexClient {
         requestmap.insert("password", password);
         let mut res = client.post(&signup_url[..]).json(&requestmap).send()?;
         match res.status() {
-            StatusCode::Ok => Ok(()),
+            StatusCode::Ok | StatusCode::Created => Ok(()),
             StatusCode::Unauthorized => Err(TermexClientError::WithMessage("Already exist".to_owned())),
-            _ => Err(TermexClientError::WithMessage("Signup failed".to_owned()))
+            k => {
+                println!("{:?}", k);
+                Err(TermexClientError::WithMessage("Signup failed".to_owned()))
+            }
         }
     }
 
