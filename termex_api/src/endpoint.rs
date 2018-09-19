@@ -97,4 +97,19 @@ impl TermexClient {
             .send()?;
         Ok(())
     }
+
+    pub fn dump(&self, from: u64, to: u64) -> TermexResult<Option<String>> {
+        let blob_url: String = format!("{}/{}", TERMEX_URL, "dump");
+        let client = Client::new();
+        let mut request_map = HashMap::new();
+        request_map.insert("from", from);
+        request_map.insert("to", to);
+        let mut res = client
+            .get(&blob_url)
+            .query(&request_map)
+            .header(Authorization(self.token.clone()))
+            .send()?;
+        let datas: String = res.text()?;
+        Ok(Some(datas))
+    }
 }
