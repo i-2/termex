@@ -27,7 +27,7 @@ script:
   - chmod +x ci/before_deploy.sh
 
 before_deploy:
-  - cargo build --release
+  -  OPENSSL_STATIC=1 cargo build --release
   - ./ci/before_deploy.sh ${TRAVIS_OS_NAME}
 cache: cargo
 deploy:
