@@ -19,14 +19,26 @@ pub trait Toblob<E: Encryptor> {
     fn encrypt(&self, &E) -> Result<String, MsgError>;
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Data {
-    blob_type: String,
-    blob_text: String,
+    pub blob_type: String,
+    pub blob_text: String,
+}
+
+impl Data {
+    pub fn new_history(text: String) -> Self {
+        Data {
+            blob_type: "history".to_owned(),
+            blob_text: text,
+        }
+    }
 }
 
 impl<D: Decryptor> Totext<D> for Data {
     fn decrypt(&self, d: &D) -> Result<String, MsgError> {
+        if self.blob_text.is_empty() {
+            return Ok(String::new());
+        }
         let bytes: Vec<u8> = d
             .decrypt(self.blob_text.clone().as_bytes().to_vec())
             .map_err(|_e| MsgError::DecodeError(self.blob_text.clone()))?;
@@ -42,7 +54,7 @@ impl<E: Encryptor> Toblob<E> for Data {
         return String::from_utf8(bytes).map_err(|_e| MsgError::ConversionError);
     }
 }
-
+#[derive(Debug)]
 pub struct Blobs<T: Toblob<Key> + Totext<Key>>(pub Vec<T>);
 
 impl<'a, T> Blobs<T>

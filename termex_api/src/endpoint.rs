@@ -98,7 +98,7 @@ impl TermexClient {
         Ok(())
     }
 
-    pub fn dump(&self, from: u64, to: u64) -> TermexResult<Option<String>> {
+    pub fn dump(&self, from: u64, to: u64) -> TermexResult<Blobs<Data>> {
         let blob_url: String = format!("{}/{}", TERMEX_URL, "dump");
         let client = Client::new();
         let mut request_map = HashMap::new();
@@ -110,6 +110,10 @@ impl TermexClient {
             .header(Authorization(self.token.clone()))
             .send()?;
         let datas: String = res.text()?;
-        Ok(Some(datas))
+        let vdata: Vec<Data> = datas
+            .split("\n")
+            .map(|dt| Data::new_history(dt.to_owned()))
+            .collect();
+        Ok(Blobs(vdata))
     }
 }

@@ -1,15 +1,22 @@
 #[macro_use]
 extern crate serde_derive;
+extern crate base64;
 extern crate chrono;
 extern crate docopt;
 extern crate termex_api;
 
+pub mod history;
 pub mod select;
 
+use base64::decode;
 use docopt::Docopt;
+use history::HistoryFile;
+use std::env;
 use std::io;
+use std::path::PathBuf;
 use std::process::{exit, Command};
 use termex_api::endpoint::TermexClient;
+use termex_api::key::Key;
 use termex_api::vault::Vault;
 
 const HELP: &'static str = "
@@ -55,4 +62,23 @@ fn main() {
     let client = TermexClient::new(token);
     let range = select::PastDays::past(args.arg_num);
     let output = client.dump(range.0, range.1);
+
+    if let Ok(key_string) = vault.get() {
+        let key_decode = decode(&key_string).unwrap();
+        let key = Key::from_pem_string(key_decode).expect("Invalid Key");
+        let mut histfile =
+            env::var("HISTFILE").expect("HISTFILE env not present");
+        let mut history = HistoryFile::new(PathBuf::from(histfile.as_str()));
+        match output {
+            Ok(blobs) => {
+                let itr = blobs.iter(&key);
+                for blob in itr {
+                    history.append(blob);
+                }
+            }
+            Err(_) => {
+                println!("Cannot download the past history");
+            }
+        }
+    }
 }
