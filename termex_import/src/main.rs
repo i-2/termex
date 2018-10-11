@@ -67,8 +67,9 @@ fn main() {
         let key_decode = decode(&key_string).unwrap();
         let key = Key::from_pem_string(key_decode).expect("Invalid Key");
         let mut histfile =
-            env::var("HISTFILE").expect("HISTFILE env not present");
-        let mut history = HistoryFile::new(PathBuf::from(histfile.as_str()));
+            env::var_os("HISTFILE").expect("HISTFILE env not present");
+        let mut history =
+            HistoryFile::new(PathBuf::from(histfile.to_str().unwrap()));
         match output {
             Ok(blobs) => {
                 let itr = blobs.iter(&key);
@@ -76,7 +77,8 @@ fn main() {
                     history.append(blob);
                 }
             }
-            Err(_) => {
+            Err(_e) => {
+                println!("{:?}", _e);
                 println!("Cannot download the past history");
             }
         }

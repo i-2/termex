@@ -42,7 +42,7 @@ impl HistoryFile {
 impl Drop for HistoryFile {
     fn drop(&mut self) {
         // history
-        let file_wrap = File::open(self.file.to_owned());
+        let file_wrap = File::create(self.file.to_owned());
         let mut file: File = match file_wrap {
             Ok(_file) => _file,
             Err(_) => {
@@ -50,7 +50,12 @@ impl Drop for HistoryFile {
             }
         };
         let joined = self.buffer.join("\n");
-        file.write_all(joined.as_bytes()).expect("Sync failed");
-        reload();
+        match file.write_all(joined.as_bytes()) {
+            Ok(_) => {
+                reload();
+                println!("Sync complete");
+            }
+            Err(_e) => println!("Cannot download the contents"),
+        };
     }
 }
