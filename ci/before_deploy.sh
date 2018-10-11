@@ -18,7 +18,8 @@ main(){
     cp $TERMEX_CLI /tmp/stage/
     cp $TERMEX_SYNC /tmp/stage/
     # now tar the package and upload
-    tar -cvf ${CRATE_NAME}-${os_type}-${TRAVIS_TAG}.tar.gz /tmp/stage/*
+    cd /tmp/stage
+    tar -cvf ${CRATE_NAME}-${os_type}-${TRAVIS_TAG}.tar.gz *
 
 }
 
