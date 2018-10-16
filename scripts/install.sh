@@ -12,22 +12,22 @@ function download_and_extract(){
     fname=`echo ${url} | cut -d / -f 9`
     echo "File name: $fname"
     tar -xvf $fname
-    echo "Please copy below lines into the .bash_profile or .bash_rc"
-    echo "export PATH='\${PATH}:\${HOME}/.termex'"
+    echo -e '\033[0;32mPlease copy below lines into the .bash_profile or .bash_rc\033[0m'
+    echo -e '\033[0;32mexport PATH="\${PATH}:\${HOME}/.termex"\033[0m'
     exit 0
 }
 
 case $PLAT in
    Darwin)
-     echo "Downloading osx binary"
+     echo -e "\033[0;32mDownloading osx binary\033[0m"
      download_and_extract osx
      ;;
    linux)
-     echo "Downloading linux binary"
+     echo -e "\033[0;32mDownloading linux binary\033[0m"
      download_and_extract linux
      ;;
     *)
-     echo "Cannot find the binary"
+     echo -e "\031[0;32mCannot find the binary\033[0m"
      exit 1
      ;;
 esac
