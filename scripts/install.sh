@@ -5,8 +5,8 @@ BINNAME=""
 
 function download_and_extract(){
     plat=$1
-    mkdir ~/.termex
-    cd ~/.termex
+    mkdir ${HOME}/.termex
+    cd ${HOME}/.termex
     url=$(curl -s https://api.github.com/repos/i-2/termex/releases/latest | jq -r .assets[].browser_download_url | grep $plat)
     wget -io $url
     fname=`echo ${url} | cut -d / -f 9`
@@ -27,7 +27,7 @@ case $PLAT in
      download_and_extract linux
      ;;
     *)
-     echo -e "\031[0;32mCannot find the binary\033[0m"
+     echo -e "\033[0;31mCannot find the binary\033[0m"
      exit 1
      ;;
 esac
