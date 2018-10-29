@@ -27,6 +27,17 @@ Save your history online.
 * `termex_sync` is used to sync your terminal inputs.
 * `termex_import` is used for importing your terminal commands
 
+## Installation
+
+```sh
+
+cd scripts/
+./install.sh
+export PATH="$HOME/.termex:$PATH"
+./setup.sh
+
+```
+
 ## Os Archives
 
 Work in progress
